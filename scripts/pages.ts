@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process"
 import fs from "node:fs"
 import os from "node:os"
 import path from "node:path"
@@ -7,12 +8,28 @@ import { buildClients, slugsFromArgs } from "./build.ts"
 import { demoUrl, pagesTarget } from "./pages-target.ts"
 
 type PublishOptions = Parameters<typeof ghpages.publish>[1]
+type Git = Parameters<NonNullable<NonNullable<PublishOptions>["beforeAdd"]>>[0]
 
 const publish = (dir: string, options: PublishOptions) =>
   new Promise<void>((resolve, reject) => ghpages.publish(dir, options, (err) => (err ? reject(err) : resolve())))
 
 const [command, ...args] = process.argv.slice(2)
 const target = pagesTarget()
+
+// git.cwd — рабочая копия ветки gh-pages (в типах @types/gh-pages его нет)
+const cwdOf = (git: Git) => (git as Git & { cwd: string }).cwd
+
+/** Оставляет в корне витрины только папки этих клиентов. Пакет сам не удаляет файлы на «.», поэтому чистим вручную. */
+const keepOnly = (slugs: string[]) => async (git: Git) => {
+  const keep = new Set([".git", ".nojekyll", ...slugs])
+  for (const name of fs.readdirSync(cwdOf(git))) {
+    if (!keep.has(name)) fs.rmSync(path.join(cwdOf(git), name), { recursive: true, force: true })
+  }
+  return git
+}
+
+const hasPagesBranch = () =>
+  execFileSync("git", ["ls-remote", "--heads", target.repo, "gh-pages"], { cwd: root, encoding: "utf8" }).trim() !== ""
 
 if (command === "deploy") {
   // Собираем демо с base под подпапку и кладём каждое в gh-pages/<slug>/.
@@ -26,9 +43,17 @@ if (command === "deploy") {
     return { base, siteUrl: url, demo: true }
   })
 
-  if (all) {
-    // --all синхронизирует витрину с clients/: удалённые клиенты исчезнут и с сайта
-    await publish(path.join(root, "dist"), { repo: target.repo, nojekyll: true, message: "Демо: все клиенты" })
+  if (all || !hasPagesBranch()) {
+    // --all синхронизирует витрину с clients/: удалённые клиенты исчезнут и с сайта.
+    // Новую ветку gh-pages пакет создаёт из копии main, поэтому первая публикация тоже чистит корень,
+    // иначе исходники попали бы на сайт.
+    await publish(path.join(root, "dist"), {
+      repo: target.repo,
+      src: slugs.map((s) => `${s}/**`),
+      nojekyll: true,
+      message: all ? "Демо: все клиенты" : `Демо: ${slugs.join(", ")}`,
+      beforeAdd: keepOnly(slugs),
+    })
   } else {
     for (const slug of slugs) {
       await publish(path.join(root, "dist", slug), { repo: target.repo, dest: slug, nojekyll: true, message: `Демо: ${slug}` })
@@ -50,10 +75,9 @@ if (command === "deploy") {
     add: true,
     dotfiles: true,
     message: `Убрано демо: ${slugs.join(", ")}`,
-    // git.cwd — рабочая копия ветки gh-pages (в типах @types/gh-pages его нет); следующий `git add .` зафиксирует удаление
+    // Следующий `git add .` зафиксирует удаление
     beforeAdd: async (git) => {
-      const cwd = (git as typeof git & { cwd: string }).cwd
-      for (const slug of slugs) fs.rmSync(path.join(cwd, slug), { recursive: true, force: true })
+      for (const slug of slugs) fs.rmSync(path.join(cwdOf(git), slug), { recursive: true, force: true })
       return git
     },
   })
