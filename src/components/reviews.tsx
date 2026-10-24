@@ -32,14 +32,14 @@ export function Reviews() {
       <ul className="no-scrollbar px-safe flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 md:grid md:grid-cols-2 md:overflow-visible md:px-0 lg:grid-cols-3">
         {reviews.map((review) => (
           <li key={review.date + review.text.slice(0, 24)} className="w-[86%] shrink-0 snap-start sm:w-[60%] md:w-auto">
-            <ReviewCard review={review} href={review.url ?? links.twoGisReviews} />
+            <ReviewCard review={review} />
           </li>
         ))}
       </ul>
       {links.twoGisReviews && (
         <div className="px-safe mt-6 md:px-0">
           <a href={links.twoGisReviews} target="_blank" rel="noopener" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-11 rounded-xl px-5")}>
-            Все отзывы в {rating?.source ?? "2ГИС"}
+            Все отзывы в 2ГИС
             <ArrowUpRight />
           </a>
         </div>

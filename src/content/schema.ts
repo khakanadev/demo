@@ -102,8 +102,6 @@ export const businessSchema = z.object({
       rating: z.number().int().min(1).max(5),
       date: z.iso.date(),
       text: z.string().min(1),
-      // Ссылка на этот отзыв в 2ГИС (кнопка «Поделиться» у отзыва). Без неё откроется links.twoGisReviews
-      url: z.url().optional(),
     }),
   ),
 })
