@@ -16,7 +16,7 @@ export function Gallery() {
   return (
     <section aria-labelledby="gallery-title" id="gallery" className="mx-auto max-w-6xl py-4 md:px-6 md:py-8">
       <div className="px-safe md:px-0">
-        <SectionHeading id="gallery-title" eyebrow="Фото" title="Цех, стенды и зона ожидания" />
+        <SectionHeading id="gallery-title" eyebrow="Фото" title={business.galleryTitle ?? "Как у нас всё устроено"} />
       </div>
       <ul className="no-scrollbar px-safe flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4 md:grid md:auto-rows-[200px] md:grid-cols-4 md:overflow-visible md:px-0 lg:auto-rows-[230px]">
         {images.map((image, i) => (

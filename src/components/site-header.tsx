@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react"
 import { Phone } from "lucide-react"
-import { buttonVariants } from "@/components/ui/button"
 import { BrandMark } from "@/components/brand-mark"
-import { primaryPhone } from "@/content/business"
+import { business, primaryPhone } from "@/content/business"
+import { useOpenStatus } from "@/hooks/use-open-status"
 import { navItems } from "@/lib/nav"
+import { describeStatusShort } from "@/lib/schedule"
 import { cn } from "@/lib/utils"
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
+  const status = useOpenStatus(business.schedule, business.timezone)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
     onScroll()
@@ -31,19 +33,23 @@ export function SiteHeader() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-3">
-          <a href={`tel:${primaryPhone.value}`} className="hidden text-sm font-semibold tabular-nums lg:block">
-            {primaryPhone.display}
-          </a>
-          <a
-            href={`tel:${primaryPhone.value}`}
-            className={cn(buttonVariants({ size: "lg" }), "h-10 rounded-xl px-4 font-semibold")}
-            aria-label={`Позвонить ${primaryPhone.display}`}
-          >
-            <Phone />
-            <span className="hidden sm:inline">Позвонить</span>
-          </a>
-        </div>
+        {/* Номер и кнопка звонка — одна «таблетка»: иконка, статус работы и телефон */}
+        <a
+          href={`tel:${primaryPhone.value}`}
+          aria-label={`Позвонить ${primaryPhone.display}`}
+          className="group flex items-center gap-2.5 rounded-full transition-colors sm:border sm:border-border sm:bg-card/70 sm:py-1 sm:pr-4 sm:pl-1 sm:backdrop-blur sm:hover:border-primary/60"
+        >
+          <span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105 sm:size-9">
+            <Phone className="size-[1.1rem]" aria-hidden />
+          </span>
+          <span className="hidden leading-tight sm:block">
+            <span className="flex items-center gap-1.5 text-[0.7rem] text-muted-foreground">
+              <span aria-hidden className={cn("size-1.5 rounded-full", status.open ? "bg-success" : "bg-white/35")} />
+              {describeStatusShort(status)}
+            </span>
+            <span className="block text-sm font-semibold tabular-nums">{primaryPhone.display}</span>
+          </span>
+        </a>
       </div>
     </header>
   )

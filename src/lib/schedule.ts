@@ -69,6 +69,15 @@ export function describeStatus(status: OpenStatus) {
   return `Закрыто · откроется ${when} в ${status.opensAt}`
 }
 
+/** Короткая версия для шапки: «Открыто до 19:00», «Откроется завтра в 10:00». */
+export function describeStatusShort(status: OpenStatus) {
+  if (status.open) return `Открыто до ${status.closesAt}`
+  if (!status.opensAt) return "Сейчас закрыто"
+  if (status.opensDay === "today") return `Откроется в ${status.opensAt}`
+  if (status.opensDay === "tomorrow") return `Откроется завтра в ${status.opensAt}`
+  return `Откроется в ${dayNames[status.opensDay].short.toLowerCase()} в ${status.opensAt}`
+}
+
 export function currentDayKey(timezone: string): DayKey {
   return dayKeys[zonedNow(timezone).dayIndex]
 }

@@ -84,6 +84,8 @@ export const businessSchema = z.object({
     )
     .min(1),
   pricesNote: z.string().optional(),
+  // Заголовок блока с фото; по умолчанию «Как у нас всё устроено»
+  galleryTitle: z.string().min(1).optional(),
   gallery: z.array(
     z.object({
       src: imagePath,
@@ -95,10 +97,13 @@ export const businessSchema = z.object({
   ),
   reviews: z.array(
     z.object({
-      author: z.string(),
+      // Имя на сайте не показывается, хранится только для себя
+      author: z.string().optional(),
       rating: z.number().int().min(1).max(5),
       date: z.iso.date(),
       text: z.string().min(1),
+      // Ссылка на этот отзыв в 2ГИС (кнопка «Поделиться» у отзыва). Без неё откроется links.twoGisReviews
+      url: z.url().optional(),
     }),
   ),
 })
