@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react"
 import { Phone } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
 import { BrandMark } from "@/components/brand-mark"
-import { business, primaryPhone } from "@/content/business"
-import { useOpenStatus } from "@/hooks/use-open-status"
+import { primaryPhone } from "@/content/business"
 import { navItems } from "@/lib/nav"
-import { describeStatusShort } from "@/lib/schedule"
 import { cn } from "@/lib/utils"
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
-  const status = useOpenStatus(business.schedule, business.timezone)
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
     onScroll()
@@ -33,22 +31,15 @@ export function SiteHeader() {
             </a>
           ))}
         </nav>
-        {/* Номер и кнопка звонка — одна «таблетка»: иконка, статус работы и телефон */}
+        {/* Одна кнопка в стиле остальных: на телефоне иконка, на планшете «Позвонить», на десктопе номер */}
         <a
           href={`tel:${primaryPhone.value}`}
           aria-label={`Позвонить ${primaryPhone.display}`}
-          className="group flex items-center gap-2.5 rounded-full transition-colors sm:border sm:border-border sm:bg-card/70 sm:py-1 sm:pr-4 sm:pl-1 sm:backdrop-blur sm:hover:border-primary/60"
+          className={cn(buttonVariants({ size: "lg" }), "size-10 rounded-xl p-0 font-semibold sm:w-auto sm:px-4")}
         >
-          <span className="grid size-10 place-items-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:scale-105 sm:size-9">
-            <Phone className="size-[1.1rem]" aria-hidden />
-          </span>
-          <span className="hidden leading-tight sm:block">
-            <span className="flex items-center gap-1.5 text-[0.7rem] text-muted-foreground">
-              <span aria-hidden className={cn("size-1.5 rounded-full", status.open ? "bg-success" : "bg-white/35")} />
-              {describeStatusShort(status)}
-            </span>
-            <span className="block text-sm font-semibold tabular-nums">{primaryPhone.display}</span>
-          </span>
+          <Phone aria-hidden />
+          <span className="hidden sm:inline lg:hidden">Позвонить</span>
+          <span className="hidden tabular-nums lg:inline">{primaryPhone.display}</span>
         </a>
       </div>
     </header>

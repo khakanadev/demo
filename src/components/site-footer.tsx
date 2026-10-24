@@ -46,8 +46,9 @@ export function SiteFooter() {
     <footer className="relative overflow-hidden border-t border-border bg-card/40 pb-(--callbar-h) md:pb-0">
       <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 size-[28rem] rounded-full bg-primary/10 blur-3xl" />
 
-      <div className="px-safe relative mx-auto grid max-w-6xl gap-10 pt-14 md:grid-cols-12 md:gap-8 md:px-6 md:pt-20">
-        <div className="space-y-5 md:col-span-5">
+      {/* На десктопе колонки по ширине содержимого и justify-between: промежутки между всеми блоками равные */}
+      <div className="px-safe relative mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-10 pt-14 sm:grid-cols-3 md:px-6 md:pt-20 lg:flex lg:justify-between lg:gap-12">
+        <div className="col-span-2 space-y-5 sm:col-span-3 lg:max-w-xs">
           <BrandMark />
           <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
             {business.tagline} в {business.cityIn ?? city}. Позвоните или напишите — подскажем цену и свободное время.
@@ -71,52 +72,50 @@ export function SiteFooter() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:col-span-7">
-          <nav aria-label="Разделы в подвале">
-            <ColumnTitle>Разделы</ColumnTitle>
-            <ul className="space-y-2.5 text-sm">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} className="text-foreground/85 transition-colors hover:text-primary">{item.label}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div>
-            <ColumnTitle>Часы работы</ColumnTitle>
-            <dl className="space-y-2.5 text-sm">
-              {groupSchedule(business.schedule).map((g) => (
-                <div key={g.label} className="flex justify-between gap-3">
-                  <dt className="text-muted-foreground">{g.label}</dt>
-                  <dd className="font-medium tabular-nums">{g.hours}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
-          <div className="col-span-2 sm:col-span-1">
-            <ColumnTitle>Контакты</ColumnTitle>
-            <ul className="space-y-3 text-sm">
-              {phones.map((p) => (
-                <li key={p.value}>
-                  <a href={`tel:${p.value}`} className="block font-semibold tabular-nums transition-colors hover:text-primary">{p.display}</a>
-                  <span className="text-xs text-muted-foreground">{p.label}</span>
-                </li>
-              ))}
-              <li className="flex gap-2 pt-1 text-muted-foreground">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
-                <span>{city}, {address.street}{address.note && `, ${address.note}`}</span>
+        <nav aria-label="Разделы в подвале">
+          <ColumnTitle>Разделы</ColumnTitle>
+          <ul className="space-y-2.5 text-sm">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} className="text-foreground/85 transition-colors hover:text-primary">{item.label}</a>
               </li>
-              {route && (
-                <li>
-                  <a href={route} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
-                    <Navigation className="size-3.5" aria-hidden /> Построить маршрут
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
+            ))}
+          </ul>
+        </nav>
+
+        <div>
+          <ColumnTitle>Часы работы</ColumnTitle>
+          <dl className="space-y-2.5 text-sm">
+            {groupSchedule(business.schedule).map((g) => (
+              <div key={g.label} className="flex justify-between gap-3">
+                <dt className="text-muted-foreground">{g.label}</dt>
+                <dd className="font-medium tabular-nums">{g.hours}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div className="col-span-2 sm:col-span-1 lg:max-w-60">
+          <ColumnTitle>Контакты</ColumnTitle>
+          <ul className="space-y-3 text-sm">
+            {phones.map((p) => (
+              <li key={p.value}>
+                <a href={`tel:${p.value}`} className="block font-semibold tabular-nums transition-colors hover:text-primary">{p.display}</a>
+                <span className="text-xs text-muted-foreground">{p.label}</span>
+              </li>
+            ))}
+            <li className="flex gap-2 pt-1 text-muted-foreground">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+              <span>{city}, {address.street}{address.note && `, ${address.note}`}</span>
+            </li>
+            {route && (
+              <li>
+                <a href={route} target="_blank" rel="noopener" className="inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+                  <Navigation className="size-3.5" aria-hidden /> Построить маршрут
+                </a>
+              </li>
+            )}
+          </ul>
         </div>
       </div>
 

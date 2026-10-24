@@ -23,7 +23,7 @@ export function Contacts() {
       <SectionHeading id="contacts-title" eyebrow="Контакты" title="Приезжайте или звоните" />
       <div className="grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="flex flex-col gap-3">
-          <div className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <div className="flex flex-col rounded-2xl border border-border bg-card p-5 md:p-6 lg:flex-auto">
             <p className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
               <Phone className="size-4 text-primary" aria-hidden /> Телефоны
             </p>
@@ -38,7 +38,7 @@ export function Contacts() {
               ))}
             </ul>
             {(messengers.whatsapp || messengers.telegram || messengers.vk) && (
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-wrap gap-2 lg:mt-auto lg:pt-5">
                 {messengers.whatsapp && (
                   <a href={messengers.whatsapp} target="_blank" rel="noopener" className={cn(buttonVariants({ variant: "secondary", size: "lg" }), "h-10 rounded-xl px-4")}>
                     <MessageCircle /> WhatsApp
@@ -58,14 +58,14 @@ export function Contacts() {
             )}
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <div className="flex flex-col rounded-2xl border border-border bg-card p-5 md:p-6 lg:flex-auto">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="size-4 text-primary" aria-hidden /> Часы работы
               </p>
               <OpenStatus className="text-xs text-muted-foreground" />
             </div>
-            <dl className="grid grid-cols-7 gap-1.5 text-center">
+            <dl className="grid grid-cols-7 gap-1.5 text-center lg:my-auto">
               {dayKeys.map((key) => {
                 const hours = schedule[key]
                 const isToday = key === today
